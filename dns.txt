@@ -1,0 +1,96 @@
+/etc/bind/named.conf.local
+zone "oriol.cat" {
+        type master;
+        file "/etc/bind/db.oriol.cat";
+};
+
+zone "1.168.192.in-addr.arpa" {
+        type master;
+        file "db.192";
+};
+
+
+cp /etc/bind/db.local /etc/bind/db.orio.cat
+cp /etc/bind/db.local /etc/bind/db.192
+/etc/bind/db.oriol.cat
+
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     oriol.cat. root.oriol.cat. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      oriol.cat.
+@       IN      A       192.168.1.1
+ftp     IN      A       192.168.1.56
+correu  IN      MX      192.168.1.139
+www     IN      A       192.168.1.234
+fct     IN      CNAME   www
+
+
+
+/etc/bind/db.192
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     1.168.192.in-addr.arpa. root.1.168.192.in-addr.arpa. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      1.168.192.in-addr.arpa.
+56      IN      A       ftp
+234     IN      A       www
+www     IN      CNAME   fct
+139     IN      MX      correu
+
+
+/etc/bind/named.conf.options
+
+forwarders {
+                8.8.8.8;
+                8.8.8.4;
+
+/etc/bind/named.conf.log
+
+logging {
+        channel bind_log {
+                file "/var/log/bind/bind.log" versions 3 size 5m;
+                severity info;
+                print-category yes;
+                print-severity yes;
+                print-time yes;
+        };
+        category default { bind_log; };
+        category update { bind_log; };
+        category update-security { bind_log; };
+        category security { bind_log; };
+        category queries { bind_log; };
+        category lame-servers { null; };
+};
+
+/etc/bind/named.conf
+
+include "/etc/bind/named.conf.log";
+
+
+/etc/bind/named.conf.options 
+
+allow-transfer {
+                192.168.1.2;
+        }; 
+
+##servidor secundari
+
+zone...
+	type slave;
+	masters {192.168.1.1;};
+
+
+
